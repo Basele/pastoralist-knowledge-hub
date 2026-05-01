@@ -1,22 +1,9 @@
-const Redis = require('ioredis');
 const { logger } = require('../utils/logger');
-
 let redis;
-
 exports.connectRedis = async () => {
-  redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
-    retryStrategy: times => Math.min(times * 100, 3000),
-    maxRetriesPerRequest: 3,
-  });
-  redis.on('connect', () => logger.info('✅ Redis connected'));
-  redis.on('error', err => logger.error('Redis error:', err));
-  exports.redis = redis;
+  const store = new Map();
+  redis = { get: async k => store.get(k)||null, set: async (k,v) => { store.set(k,v); return "OK"; }, setex: async (k,t,v) => { store.set(k,v); return "OK"; }, del: async k => { store.delete(k); return 1; }, on: ()=>{} };
+  if (!process.env.REDIS_URL) return;
+  try { const Redis = require("ioredis"); redis = new Redis(process.env.REDIS_URL, { retryStrategy: t => t > 3 ? null : t*200, lazyConnect: true }); await redis.connect(); } catch(e) { }
 };
-
-exports.redis = null;
-
-// Allow importing redis directly after connect
-Object.defineProperty(exports, 'redis', {
-  get: () => redis,
-  set: (v) => { redis = v; },
-});
+Object.defineProperty(exports, "redis", { get: () => redis, set: v => { redis = v; } });

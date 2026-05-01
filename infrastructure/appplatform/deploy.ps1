@@ -124,4 +124,6 @@ Write-Warn "Next step — push your code to GitHub and every push to 'main' will
 Write-Host "  cd $PWD" -ForegroundColor White
 Write-Host "  git push origin main" -ForegroundColor White
 Write-Host ""
-Write-Host "Done! 🌍 Pastoralist Knowledge Hub is live." -ForegroundColor Green
+Write-Host "Done! Pastoralist Knowledge Hub is live." -ForegroundColor Green
+
+
