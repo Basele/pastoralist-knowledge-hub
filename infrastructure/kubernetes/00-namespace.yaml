@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pikh
+  labels:
+    app: pastoralist-knowledge-hub
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pikh-config
+  namespace: pikh
+data:
+  NODE_ENV: "production"
+  PORT: "4000"
+  API_VERSION: "v1"
+  FRONTEND_URL: "https://pastoralistknowledge.org"
+  ELASTICSEARCH_URL: "http://pikh-elasticsearch:9200"
+  REDIS_URL: "redis://pikh-redis:6379"

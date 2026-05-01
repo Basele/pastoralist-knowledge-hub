@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pikh-frontend
+  namespace: pikh
+  labels:
+    app: pikh-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pikh-frontend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: pikh-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: registry.digitalocean.com/pikh-registry/pikh-frontend:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pikh-frontend
+  namespace: pikh
+spec:
+  selector:
+    app: pikh-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP

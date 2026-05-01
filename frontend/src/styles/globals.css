@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-earth-50: #F7F3ED;
+    --color-savanna-600: #3A700D;
+    --color-savanna-700: #2D5616;
+    --color-clay-500: #C44420;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    @apply bg-earth-50 text-earth-900 font-body antialiased;
+    background-image:
+      radial-gradient(circle at 20% 50%, rgba(83,140,26,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(196,68,32,0.03) 0%, transparent 40%);
+  }
+
+  h1, h2, h3 { @apply font-display; }
+
+  ::selection { @apply bg-savanna-200 text-savanna-900; }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-savanna-600 text-white
+           font-body font-medium text-sm transition-all duration-200
+           hover:bg-savanna-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-earth-300
+           text-earth-700 font-body font-medium text-sm transition-all duration-200
+           hover:bg-earth-100 active:scale-95;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg text-earth-600
+           font-body text-sm transition-all duration-200 hover:bg-earth-100;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl border border-earth-100 shadow-sm
+           hover:shadow-md transition-shadow duration-200;
+  }
+
+  .input {
+    @apply w-full px-4 py-2.5 rounded-lg border border-earth-200 bg-white
+           font-body text-sm text-earth-900 placeholder-earth-400
+           focus:outline-none focus:ring-2 focus:ring-savanna-500 focus:border-transparent
+           transition duration-150;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-public    { @apply bg-savanna-100 text-savanna-800; }
+  .badge-community { @apply bg-sky-100 text-sky-800; }
+  .badge-elder     { @apply bg-earth-200 text-earth-800; }
+  .badge-sacred    { @apply bg-clay-100 text-clay-800; }
+
+  .tier-public    { @apply badge badge-public; }
+  .tier-community { @apply badge badge-community; }
+  .tier-elder     { @apply badge badge-elder; }
+  .tier-sacred    { @apply badge badge-sacred; }
+
+  .page-container { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
+  .section-title  { @apply font-display text-2xl sm:text-3xl text-earth-900 font-semibold; }
+}
+
+/* Leaflet map overrides */
+.leaflet-container {
+  font-family: 'Source Sans 3', sans-serif !important;
+  border-radius: 12px;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 10px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #F7F3ED; }
+::-webkit-scrollbar-thumb { background: #C4AD7C; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #A88B50; }

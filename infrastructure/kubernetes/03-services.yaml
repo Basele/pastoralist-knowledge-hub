@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pikh-redis
+  namespace: pikh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pikh-redis
+  template:
+    metadata:
+      labels:
+        app: pikh-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          args: ["--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+      volumes:
+        - name: redis-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pikh-redis
+  namespace: pikh
+spec:
+  selector:
+    app: pikh-redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pikh-elasticsearch
+  namespace: pikh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pikh-elasticsearch
+  template:
+    metadata:
+      labels:
+        app: pikh-elasticsearch
+    spec:
+      containers:
+        - name: elasticsearch
+          image: elasticsearch:8.11.0
+          ports:
+            - containerPort: 9200
+          env:
+            - name: discovery.type
+              value: single-node
+            - name: xpack.security.enabled
+              value: "false"
+            - name: ES_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          volumeMounts:
+            - name: es-data
+              mountPath: /usr/share/elasticsearch/data
+      volumes:
+        - name: es-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pikh-elasticsearch
+  namespace: pikh
+spec:
+  selector:
+    app: pikh-elasticsearch
+  ports:
+    - port: 9200
+      targetPort: 9200

@@ -1,0 +1,164 @@
+name: CI/CD — Pastoralist Knowledge Hub (App Platform)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: registry.digitalocean.com/pikh-registry
+  BACKEND_IMAGE: pikh-backend
+  FRONTEND_IMAGE: pikh-frontend
+
+jobs:
+  # ── Test ───────────────────────────────────────────────────────────────────
+  test-backend:
+    name: Test Backend
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:15-3.3
+        env:
+          POSTGRES_DB: pikh_test
+          POSTGRES_USER: pikh_user
+          POSTGRES_PASSWORD: pikh_pass
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      - name: Install dependencies
+        working-directory: backend
+        run: npm ci
+      - name: Generate Prisma client
+        working-directory: backend
+        run: npx prisma generate
+        env:
+          DATABASE_URL: postgresql://pikh_user:pikh_pass@localhost:5432/pikh_test
+      - name: Run migrations
+        working-directory: backend
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://pikh_user:pikh_pass@localhost:5432/pikh_test
+      - name: Run tests
+        working-directory: backend
+        run: npm test
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgresql://pikh_user:pikh_pass@localhost:5432/pikh_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test_secret_key
+          JWT_REFRESH_SECRET: test_refresh_secret
+
+  test-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+        env:
+          VITE_API_URL: https://api.pastoralistknowledge.org/api/v1
+
+  # ── Build & Push ───────────────────────────────────────────────────────────
+  build-and-push:
+    name: Build & Push Images
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-frontend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Log in to DO Container Registry
+        run: doctl registry login --expiry-seconds 1200
+
+      - name: Build backend image
+        run: |
+          docker build \
+            -f infrastructure/docker/backend.Dockerfile \
+            -t $REGISTRY/$BACKEND_IMAGE:${{ github.sha }} \
+            -t $REGISTRY/$BACKEND_IMAGE:latest \
+            ./backend
+
+      - name: Build frontend image
+        run: |
+          docker build \
+            -f infrastructure/docker/frontend.Dockerfile \
+            --build-arg VITE_API_URL=https://api.pastoralistknowledge.org/api/v1 \
+            -t $REGISTRY/$FRONTEND_IMAGE:${{ github.sha }} \
+            -t $REGISTRY/$FRONTEND_IMAGE:latest \
+            ./frontend
+
+      - name: Push backend image
+        run: |
+          docker push $REGISTRY/$BACKEND_IMAGE:${{ github.sha }}
+          docker push $REGISTRY/$BACKEND_IMAGE:latest
+
+      - name: Push frontend image
+        run: |
+          docker push $REGISTRY/$FRONTEND_IMAGE:${{ github.sha }}
+          docker push $REGISTRY/$FRONTEND_IMAGE:latest
+
+  # ── Deploy ─────────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to Digital Ocean Kubernetes
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Save kubeconfig
+        run: doctl kubernetes cluster kubeconfig save pikh-cluster
+
+      - name: Update image tags in manifests
+        run: |
+          sed -i "s|pikh-backend:latest|pikh-backend:${{ github.sha }}|g" infrastructure/kubernetes/01-backend.yaml
+          sed -i "s|pikh-frontend:latest|pikh-frontend:${{ github.sha }}|g" infrastructure/kubernetes/02-frontend.yaml
+
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f infrastructure/kubernetes/00-namespace.yaml
+          kubectl apply -f infrastructure/kubernetes/01-backend.yaml
+          kubectl apply -f infrastructure/kubernetes/02-frontend.yaml
+          kubectl apply -f infrastructure/kubernetes/03-services.yaml
+          kubectl apply -f infrastructure/kubernetes/04-ingress.yaml
+
+      - name: Run database migrations
+        run: |
+          kubectl exec -n pikh deploy/pikh-backend -- npx prisma migrate deploy
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/pikh-backend -n pikh --timeout=120s
+          kubectl rollout status deployment/pikh-frontend -n pikh --timeout=120s
+
+      - name: Notify success
+        run: echo "✅ Deployed to https://pastoralistknowledge.org — commit ${{ github.sha }}"

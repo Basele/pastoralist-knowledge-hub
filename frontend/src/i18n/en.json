@@ -1,0 +1,125 @@
+{
+  "nav": {
+    "home": "Home",
+    "knowledge": "Knowledge",
+    "map": "Map",
+    "community": "Community",
+    "contribute": "Contribute",
+    "admin": "Admin",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "profile": "Profile"
+  },
+  "home": {
+    "hero_title": "Preserving the Wisdom of the Land",
+    "hero_subtitle": "A living repository of pastoralist indigenous knowledge — from grazing routes to medicinal plants, oral histories to seasonal wisdom.",
+    "explore_knowledge": "Explore Knowledge",
+    "view_map": "View Map",
+    "stats_records": "Knowledge Records",
+    "stats_communities": "Communities",
+    "stats_locations": "Mapped Locations",
+    "stats_languages": "Languages",
+    "featured_title": "Featured Knowledge",
+    "categories_title": "Browse by Category"
+  },
+  "knowledge": {
+    "title": "Knowledge Repository",
+    "search_placeholder": "Search knowledge...",
+    "filter_category": "Category",
+    "filter_all": "All Categories",
+    "add_record": "Add Record",
+    "no_results": "No knowledge records found.",
+    "view_details": "View Details",
+    "contribute_label": "Contributed by",
+    "community_label": "Community",
+    "access_tier": "Access",
+    "categories": {
+      "LIVESTOCK_MANAGEMENT": "Livestock Management",
+      "WATER_SOURCES": "Water Sources",
+      "GRAZING_ROUTES": "Grazing Routes",
+      "MEDICINAL_PLANTS": "Medicinal Plants",
+      "WEATHER_PREDICTION": "Weather Prediction",
+      "CONFLICT_RESOLUTION": "Conflict Resolution",
+      "CULTURAL_CEREMONIES": "Cultural Ceremonies",
+      "FOOD_PRESERVATION": "Food Preservation",
+      "ECOLOGICAL_KNOWLEDGE": "Ecological Knowledge",
+      "ORAL_HISTORY": "Oral History",
+      "GOVERNANCE": "Governance",
+      "OTHER": "Other"
+    }
+  },
+  "map": {
+    "title": "Pastoral Knowledge Map",
+    "subtitle": "Explore grazing lands, water points, migration routes and sacred sites",
+    "filter_type": "Filter by type",
+    "all_types": "All Types",
+    "location_types": {
+      "GRAZING_LAND": "Grazing Land",
+      "WATER_POINT": "Water Point",
+      "MIGRATION_ROUTE": "Migration Route",
+      "SACRED_SITE": "Sacred Site",
+      "SETTLEMENT": "Settlement",
+      "MARKET": "Market",
+      "CONFLICT_ZONE": "Conflict Zone",
+      "CONSERVATION_AREA": "Conservation Area"
+    }
+  },
+  "auth": {
+    "login_title": "Welcome Back",
+    "login_subtitle": "Sign in to access community knowledge",
+    "register_title": "Join the Hub",
+    "register_subtitle": "Create your account to contribute and collaborate",
+    "email": "Email Address",
+    "password": "Password",
+    "name": "Full Name",
+    "community": "Community (optional)",
+    "login_btn": "Sign In",
+    "register_btn": "Create Account",
+    "no_account": "Don't have an account?",
+    "has_account": "Already have an account?",
+    "forgot_password": "Forgot password?"
+  },
+  "contribute": {
+    "title": "Contribute Knowledge",
+    "subtitle": "Share your community's wisdom with the hub",
+    "form_title": "Knowledge Title",
+    "form_title_sw": "Title in Swahili (optional)",
+    "form_description": "Brief Description",
+    "form_content": "Detailed Content",
+    "form_category": "Category",
+    "form_access": "Access Tier",
+    "form_tags": "Tags (comma separated)",
+    "form_location": "Associated Location",
+    "form_source": "Source / Attribution",
+    "form_submit": "Submit for Review",
+    "access_help": "Choose who can see this knowledge",
+    "tiers": {
+      "PUBLIC": "Public — Anyone can view",
+      "COMMUNITY": "Community — Verified members only",
+      "ELDER": "Elder — Custodians only",
+      "SACRED": "Sacred — Explicit consent required"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "search": "Search",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "see_all": "See All",
+    "read_more": "Read More"
+  },
+  "tiers": {
+    "PUBLIC": "Public",
+    "COMMUNITY": "Community",
+    "ELDER": "Elder",
+    "SACRED": "Sacred"
+  }
+}

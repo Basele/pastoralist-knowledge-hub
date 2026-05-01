@@ -1,0 +1,93 @@
+name: pastoralist-knowledge-hub
+region: ams
+
+# ── Services ──────────────────────────────────────────────────────────────────
+
+services:
+  # Backend API
+  - name: backend
+    github:
+      repo: Basele/pastoralist-knowledge-hub
+      branch: main
+      deploy_on_push: true
+    source_dir: backend
+    dockerfile_path: infrastructure/docker/backend.Dockerfile
+    http_port: 4000
+    instance_size_slug: basic-xs
+    instance_count: 1
+    health_check:
+      http_path: /health
+      initial_delay_seconds: 30
+      period_seconds: 15
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "4000"
+      - key: FRONTEND_URL
+        value: ${APP_URL}
+      - key: DATABASE_URL
+        value: ${pikh-postgres.DATABASE_URL}
+      - key: REDIS_URL
+        value: ${pikh-redis.REDIS_URL}
+      - key: JWT_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: JWT_REFRESH_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 30d
+      - key: DO_SPACES_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: DO_SPACES_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: DO_SPACES_ENDPOINT
+        value: ams3.digitaloceanspaces.com
+      - key: DO_SPACES_BUCKET
+        value: pikh-media
+      - key: DO_SPACES_CDN_ENDPOINT
+        value: https://pikh-media.ams3.cdn.digitaloceanspaces.com
+      - key: ELASTICSEARCH_URL
+        value: ""
+      - key: RATE_LIMIT_WINDOW_MS
+        value: "900000"
+      - key: RATE_LIMIT_MAX
+        value: "100"
+    run_command: npm start
+
+  # Frontend
+  - name: frontend
+    github:
+      repo: Basele/pastoralist-knowledge-hub
+      branch: main
+      deploy_on_push: true
+    source_dir: frontend
+    dockerfile_path: infrastructure/docker/frontend.Dockerfile
+    http_port: 80
+    instance_size_slug: basic-xs
+    instance_count: 1
+    envs:
+      - key: VITE_API_URL
+        value: ${backend.PUBLIC_URL}/api/v1
+
+# ── Databases ─────────────────────────────────────────────────────────────────
+
+databases:
+  - name: pikh-postgres
+    engine: PG
+    version: "15"
+    size: db-s-1vcpu-1gb
+    num_nodes: 1
+    production: false
+
+  - name: pikh-redis
+    engine: REDIS
+    version: "7"
+    size: db-s-1vcpu-1gb
+    num_nodes: 1
+    production: false

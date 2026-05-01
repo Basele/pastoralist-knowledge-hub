@@ -1,0 +1,125 @@
+{
+  "nav": {
+    "home": "Nyumbani",
+    "knowledge": "Maarifa",
+    "map": "Ramani",
+    "community": "Jamii",
+    "contribute": "Changia",
+    "admin": "Msimamizi",
+    "login": "Ingia",
+    "register": "Jisajili",
+    "logout": "Toka",
+    "profile": "Wasifu"
+  },
+  "home": {
+    "hero_title": "Kuhifadhi Hekima ya Ardhi",
+    "hero_subtitle": "Hazina ya maarifa ya kiasili ya wafugaji — kutoka njia za malisho hadi mimea ya dawa, historia za mdomo hadi hekima za msimu.",
+    "explore_knowledge": "Chunguza Maarifa",
+    "view_map": "Tazama Ramani",
+    "stats_records": "Rekodi za Maarifa",
+    "stats_communities": "Jamii",
+    "stats_locations": "Maeneo Yaliyopigwa Ramani",
+    "stats_languages": "Lugha",
+    "featured_title": "Maarifa Maarufu",
+    "categories_title": "Vinjari kwa Kategoria"
+  },
+  "knowledge": {
+    "title": "Hazina ya Maarifa",
+    "search_placeholder": "Tafuta maarifa...",
+    "filter_category": "Kategoria",
+    "filter_all": "Kategoria Zote",
+    "add_record": "Ongeza Rekodi",
+    "no_results": "Hakuna rekodi za maarifa zilizopatikana.",
+    "view_details": "Angalia Maelezo",
+    "contribute_label": "Imechangiwa na",
+    "community_label": "Jamii",
+    "access_tier": "Ufikiaji",
+    "categories": {
+      "LIVESTOCK_MANAGEMENT": "Usimamizi wa Mifugo",
+      "WATER_SOURCES": "Vyanzo vya Maji",
+      "GRAZING_ROUTES": "Njia za Malisho",
+      "MEDICINAL_PLANTS": "Mimea ya Dawa",
+      "WEATHER_PREDICTION": "Utabiri wa Hali ya Hewa",
+      "CONFLICT_RESOLUTION": "Utatuzi wa Migogoro",
+      "CULTURAL_CEREMONIES": "Sherehe za Kitamaduni",
+      "FOOD_PRESERVATION": "Uhifadhi wa Chakula",
+      "ECOLOGICAL_KNOWLEDGE": "Maarifa ya Ikolojia",
+      "ORAL_HISTORY": "Historia ya Mdomo",
+      "GOVERNANCE": "Utawala",
+      "OTHER": "Nyingine"
+    }
+  },
+  "map": {
+    "title": "Ramani ya Maarifa ya Ufugaji",
+    "subtitle": "Chunguza ardhi za malisho, vyanzo vya maji, njia za uhamaji na maeneo matakatifu",
+    "filter_type": "Chuja kwa aina",
+    "all_types": "Aina Zote",
+    "location_types": {
+      "GRAZING_LAND": "Ardhi ya Malisho",
+      "WATER_POINT": "Chanzo cha Maji",
+      "MIGRATION_ROUTE": "Njia ya Uhamaji",
+      "SACRED_SITE": "Eneo Takatifu",
+      "SETTLEMENT": "Makazi",
+      "MARKET": "Soko",
+      "CONFLICT_ZONE": "Eneo la Migogoro",
+      "CONSERVATION_AREA": "Eneo la Hifadhi"
+    }
+  },
+  "auth": {
+    "login_title": "Karibu Tena",
+    "login_subtitle": "Ingia ili kufikia maarifa ya jamii",
+    "register_title": "Jiunge na Kituo",
+    "register_subtitle": "Fungua akaunti yako ili kuchangia na kushirikiana",
+    "email": "Anwani ya Barua Pepe",
+    "password": "Nywila",
+    "name": "Jina Kamili",
+    "community": "Jamii (hiari)",
+    "login_btn": "Ingia",
+    "register_btn": "Fungua Akaunti",
+    "no_account": "Huna akaunti?",
+    "has_account": "Una akaunti tayari?",
+    "forgot_password": "Umesahau nywila?"
+  },
+  "contribute": {
+    "title": "Changia Maarifa",
+    "subtitle": "Shiriki hekima ya jamii yako na kituo",
+    "form_title": "Kichwa cha Maarifa",
+    "form_title_sw": "Kichwa kwa Kiswahili (hiari)",
+    "form_description": "Maelezo Mafupi",
+    "form_content": "Maudhui ya Kina",
+    "form_category": "Kategoria",
+    "form_access": "Kiwango cha Ufikiaji",
+    "form_tags": "Lebo (tenganisha kwa koma)",
+    "form_location": "Eneo Linalohusiana",
+    "form_source": "Chanzo / Uthibitisho",
+    "form_submit": "Wasilisha kwa Ukaguzi",
+    "access_help": "Chagua nani anaweza kuona maarifa haya",
+    "tiers": {
+      "PUBLIC": "Umma — Yeyote anaweza kuona",
+      "COMMUNITY": "Jamii — Wanachama walioidhinishwa tu",
+      "ELDER": "Wazee — Walezi tu",
+      "SACRED": "Takatifu — Inahitaji idhini maalum"
+    }
+  },
+  "common": {
+    "loading": "Inapakia...",
+    "error": "Kuna hitilafu",
+    "save": "Hifadhi",
+    "cancel": "Ghairi",
+    "delete": "Futa",
+    "edit": "Hariri",
+    "close": "Funga",
+    "search": "Tafuta",
+    "back": "Rudi",
+    "next": "Ijayo",
+    "previous": "Iliyopita",
+    "see_all": "Angalia Yote",
+    "read_more": "Soma Zaidi"
+  },
+  "tiers": {
+    "PUBLIC": "Umma",
+    "COMMUNITY": "Jamii",
+    "ELDER": "Wazee",
+    "SACRED": "Takatifu"
+  }
+}

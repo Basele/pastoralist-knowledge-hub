@@ -1,0 +1,285 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis, uuid_ossp]
+}
+
+// ─── USER & AUTH ────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  email         String    @unique
+  passwordHash  String
+  name          String
+  nameSwahili   String?
+  role          UserRole  @default(COMMUNITY_MEMBER)
+  accessTier    AccessTier @default(PUBLIC)
+  communityId   String?   @db.Uuid
+  community     Community? @relation(fields: [communityId], references: [id])
+  isVerified    Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  profileImage  String?
+  bio           String?
+  bioSwahili    String?
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  contributions    KnowledgeRecord[]
+  comments         Comment[]
+  reviews          Review[]
+  consentGrants    ConsentGrant[]
+  refreshTokens    RefreshToken[]
+  notifications    Notification[]
+  mediaUploads     MediaFile[]
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  ELDER_CUSTODIAN
+  COMMUNITY_MEMBER
+  RESEARCHER
+  PUBLIC_VIEWER
+}
+
+enum AccessTier {
+  PUBLIC
+  COMMUNITY
+  ELDER
+  SACRED
+}
+
+model RefreshToken {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  token     String   @unique
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// ─── COMMUNITY ───────────────────────────────────────────────────────────────
+
+model Community {
+  id            String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name          String
+  nameSwahili   String?
+  description   String?
+  descriptionSwahili String?
+  region        String?
+  country       String  @default("Kenya")
+  logo          String?
+  isActive      Boolean @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  members          User[]
+  knowledgeRecords KnowledgeRecord[]
+  locations        Location[]
+}
+
+// ─── KNOWLEDGE RECORDS ───────────────────────────────────────────────────────
+
+model KnowledgeRecord {
+  id                String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  title             String
+  titleSwahili      String?
+  description       String
+  descriptionSwahili String?
+  content           String       @db.Text
+  contentSwahili    String?      @db.Text
+  category          KnowledgeCategory
+  accessTier        AccessTier   @default(PUBLIC)
+  status            RecordStatus @default(DRAFT)
+  language          String       @default("en")
+  tags              String[]
+  tagsSwahili       String[]
+  seasonality       String?
+  source            String?
+  culturalContext   String?      @db.Text
+  practiceType      String?
+  verifiedByElder   Boolean      @default(false)
+
+  contributorId     String       @db.Uuid
+  contributor       User         @relation(fields: [contributorId], references: [id])
+  communityId       String       @db.Uuid
+  community         Community    @relation(fields: [communityId], references: [id])
+  locationId        String?      @db.Uuid
+  location          Location?    @relation(fields: [locationId], references: [id])
+
+  mediaFiles        MediaFile[]
+  comments          Comment[]
+  reviews           Review[]
+  consentGrants     ConsentGrant[]
+
+  viewCount         Int          @default(0)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@index([category])
+  @@index([accessTier])
+  @@index([status])
+  @@index([communityId])
+}
+
+enum KnowledgeCategory {
+  LIVESTOCK_MANAGEMENT
+  WATER_SOURCES
+  GRAZING_ROUTES
+  MEDICINAL_PLANTS
+  WEATHER_PREDICTION
+  CONFLICT_RESOLUTION
+  CULTURAL_CEREMONIES
+  FOOD_PRESERVATION
+  ECOLOGICAL_KNOWLEDGE
+  ORAL_HISTORY
+  GOVERNANCE
+  OTHER
+}
+
+enum RecordStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
+// ─── LOCATIONS / GIS ─────────────────────────────────────────────────────────
+
+model Location {
+  id            String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name          String
+  nameSwahili   String?
+  description   String?
+  locationType  LocationType
+  // PostGIS geometry stored as text — use raw queries for spatial ops
+  latitude      Float?
+  longitude     Float?
+  geojson       Json?    // For complex geometries (routes, polygons)
+  elevation     Float?
+  country       String   @default("Kenya")
+  region        String?
+  communityId   String?  @db.Uuid
+  community     Community? @relation(fields: [communityId], references: [id])
+  isSeasonalWater Boolean @default(false)
+  seasonAvailable String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  knowledgeRecords KnowledgeRecord[]
+}
+
+enum LocationType {
+  GRAZING_LAND
+  WATER_POINT
+  MIGRATION_ROUTE
+  SACRED_SITE
+  SETTLEMENT
+  MARKET
+  CONFLICT_ZONE
+  CONSERVATION_AREA
+  OTHER
+}
+
+// ─── MEDIA ───────────────────────────────────────────────────────────────────
+
+model MediaFile {
+  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  filename        String
+  originalName    String
+  mimeType        String
+  size            Int
+  url             String
+  cdnUrl          String?
+  mediaType       MediaType
+  duration        Int?      // seconds for audio/video
+  transcription   String?   @db.Text
+  transcriptionSw String?   @db.Text
+  caption         String?
+  captionSwahili  String?
+  accessTier      AccessTier @default(PUBLIC)
+
+  uploadedById    String    @db.Uuid
+  uploadedBy      User      @relation(fields: [uploadedById], references: [id])
+  recordId        String?   @db.Uuid
+  record          KnowledgeRecord? @relation(fields: [recordId], references: [id])
+
+  createdAt       DateTime  @default(now())
+}
+
+enum MediaType {
+  IMAGE
+  AUDIO
+  VIDEO
+  DOCUMENT
+}
+
+// ─── COMMUNITY ENGAGEMENT ────────────────────────────────────────────────────
+
+model Comment {
+  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  content     String   @db.Text
+  contentSw   String?  @db.Text
+  authorId    String   @db.Uuid
+  author      User     @relation(fields: [authorId], references: [id])
+  recordId    String   @db.Uuid
+  record      KnowledgeRecord @relation(fields: [recordId], references: [id])
+  parentId    String?  @db.Uuid
+  parent      Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies     Comment[] @relation("CommentReplies")
+  isModerated Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Review {
+  id          String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  decision    ReviewDecision
+  notes       String?      @db.Text
+  reviewerId  String       @db.Uuid
+  reviewer    User         @relation(fields: [reviewerId], references: [id])
+  recordId    String       @db.Uuid
+  record      KnowledgeRecord @relation(fields: [recordId], references: [id])
+  createdAt   DateTime     @default(now())
+}
+
+enum ReviewDecision {
+  APPROVED
+  REJECTED
+  NEEDS_REVISION
+}
+
+// ─── CONSENT & ACCESS CONTROL ────────────────────────────────────────────────
+
+model ConsentGrant {
+  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  grantedById String   @db.Uuid
+  grantedBy   User     @relation(fields: [grantedById], references: [id])
+  recordId    String   @db.Uuid
+  record      KnowledgeRecord @relation(fields: [recordId], references: [id])
+  purpose     String
+  expiresAt   DateTime?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+// ─── NOTIFICATIONS ────────────────────────────────────────────────────────────
+
+model Notification {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  data      Json?
+  createdAt DateTime @default(now())
+}

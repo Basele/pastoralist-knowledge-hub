@@ -1,0 +1,67 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,jsx}'],
+  theme: {
+    extend: {
+      colors: {
+        earth: {
+          50:  '#F7F3ED',
+          100: '#EDE4D3',
+          200: '#D9C9A8',
+          300: '#C4AD7C',
+          400: '#A88B50',
+          500: '#8B6F35',
+          600: '#6E5528',
+          700: '#523D1C',
+          800: '#362612',
+          900: '#1A1008',
+        },
+        savanna: {
+          50:  '#F0F7E6',
+          100: '#D9EBB8',
+          200: '#BADA83',
+          300: '#95C44D',
+          400: '#72A82A',
+          500: '#538C1A',
+          600: '#3A700D',
+          700: '#2D5616',
+          800: '#1E3D0A',
+          900: '#102306',
+        },
+        sky: {
+          50:  '#EBF4FB',
+          100: '#C4DFF5',
+          200: '#8DC2EC',
+          300: '#56A5E2',
+          400: '#2788D8',
+          500: '#1A6EB8',
+          600: '#115799',
+          700: '#0A4178',
+          800: '#062C55',
+          900: '#031932',
+        },
+        clay: {
+          50:  '#FDF2ED',
+          100: '#F8D8C7',
+          200: '#F1B398',
+          300: '#E88A65',
+          400: '#DC5F32',
+          500: '#C44420',
+          600: '#A03318',
+          700: '#7A2512',
+          800: '#55180C',
+          900: '#300D06',
+        },
+      },
+      fontFamily: {
+        display: ['"Playfair Display"', 'Georgia', 'serif'],
+        body: ['"Source Sans 3"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
+      },
+      backgroundImage: {
+        'savanna-texture': "url('/textures/savanna.svg')",
+      },
+    },
+  },
+  plugins: [],
+};
