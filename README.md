@@ -1,6 +1,6 @@
-# 🌍 Pastoralist Indigenous Knowledge Hub
+# Pastoralist Indigenous Knowledge Hub 
 
-A full-stack platform to document, preserve, and share pastoralist indigenous knowledge — with community-controlled access, multilingual support (English & Swahili), geospatial mapping, and offline capability.
+A full-stack platform to document, preserve, and share pastoralist indigenous knowledge — with community-controlled access, multilingual support (English & Swahili), geospatial mapping, and offline capability. by @Gbasele
 
 ## Tech Stack
 
