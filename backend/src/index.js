@@ -1,24 +1,18 @@
-require('dotenv').config();
-const app = require('./app');
-const { logger } = require('./utils/logger');
-const { connectRedis } = require('./config/redis');
-const { connectElasticsearch } = require('./config/elasticsearch');
-
+﻿require("dotenv").config();
+const app = require("./app");
+const { logger } = require("./utils/logger");
 const PORT = process.env.PORT || 4000;
 
 async function startServer() {
   try {
+    const { connectRedis } = require("./config/redis");
     await connectRedis();
-    await connectElasticsearch();
-
-    app.listen(PORT, () => {
-      logger.info(`🌍 PIKH API running on port ${PORT} [${process.env.NODE_ENV}]`);
-      logger.info(`📚 API Docs: http://localhost:${PORT}/api/docs`);
-    });
-  } catch (error) {
-    logger.error('Failed to start server:', error);
-    process.exit(1);
+  } catch(e) {
+    logger.warn("Redis skipped: " + e.message);
   }
+  app.listen(PORT, "0.0.0.0", () => {
+    logger.info("PIKH API running on port " + PORT);
+  });
 }
 
 startServer();
