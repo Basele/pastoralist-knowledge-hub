@@ -1,18 +1,18 @@
-generator client {
+﻿generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["postgresqlExtensions"]
+  
 }
 
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
-  extensions = [postgis, uuid_ossp]
+
 }
 
-// ─── USER & AUTH ────────────────────────────────────────────────────────────
+// â”€â”€â”€ USER & AUTH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model User {
-  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id            String    @id @default(uuid()) @db.Uuid
   email         String    @unique
   passwordHash  String
   name          String
@@ -56,7 +56,7 @@ enum AccessTier {
 }
 
 model RefreshToken {
-  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id        String   @id @default(uuid()) @db.Uuid
   token     String   @unique
   userId    String   @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -64,10 +64,10 @@ model RefreshToken {
   createdAt DateTime @default(now())
 }
 
-// ─── COMMUNITY ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ COMMUNITY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model Community {
-  id            String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id            String  @id @default(uuid()) @db.Uuid
   name          String
   nameSwahili   String?
   description   String?
@@ -84,10 +84,10 @@ model Community {
   locations        Location[]
 }
 
-// ─── KNOWLEDGE RECORDS ───────────────────────────────────────────────────────
+// â”€â”€â”€ KNOWLEDGE RECORDS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model KnowledgeRecord {
-  id                String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id                String       @id @default(uuid()) @db.Uuid
   title             String
   titleSwahili      String?
   description       String
@@ -151,15 +151,15 @@ enum RecordStatus {
   ARCHIVED
 }
 
-// ─── LOCATIONS / GIS ─────────────────────────────────────────────────────────
+// â”€â”€â”€ LOCATIONS / GIS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model Location {
-  id            String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id            String   @id @default(uuid()) @db.Uuid
   name          String
   nameSwahili   String?
   description   String?
   locationType  LocationType
-  // PostGIS geometry stored as text — use raw queries for spatial ops
+  // PostGIS geometry stored as text â€” use raw queries for spatial ops
   latitude      Float?
   longitude     Float?
   geojson       Json?    // For complex geometries (routes, polygons)
@@ -188,10 +188,10 @@ enum LocationType {
   OTHER
 }
 
-// ─── MEDIA ───────────────────────────────────────────────────────────────────
+// â”€â”€â”€ MEDIA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model MediaFile {
-  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id              String    @id @default(uuid()) @db.Uuid
   filename        String
   originalName    String
   mimeType        String
@@ -221,10 +221,10 @@ enum MediaType {
   DOCUMENT
 }
 
-// ─── COMMUNITY ENGAGEMENT ────────────────────────────────────────────────────
+// â”€â”€â”€ COMMUNITY ENGAGEMENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model Comment {
-  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
   content     String   @db.Text
   contentSw   String?  @db.Text
   authorId    String   @db.Uuid
@@ -240,7 +240,7 @@ model Comment {
 }
 
 model Review {
-  id          String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id          String       @id @default(uuid()) @db.Uuid
   decision    ReviewDecision
   notes       String?      @db.Text
   reviewerId  String       @db.Uuid
@@ -256,10 +256,10 @@ enum ReviewDecision {
   NEEDS_REVISION
 }
 
-// ─── CONSENT & ACCESS CONTROL ────────────────────────────────────────────────
+// â”€â”€â”€ CONSENT & ACCESS CONTROL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model ConsentGrant {
-  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
   grantedById String   @db.Uuid
   grantedBy   User     @relation(fields: [grantedById], references: [id])
   recordId    String   @db.Uuid
@@ -270,10 +270,10 @@ model ConsentGrant {
   createdAt   DateTime @default(now())
 }
 
-// ─── NOTIFICATIONS ────────────────────────────────────────────────────────────
+// â”€â”€â”€ NOTIFICATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model Notification {
-  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id        String   @id @default(uuid()) @db.Uuid
   userId    String   @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   type      String
@@ -283,3 +283,4 @@ model Notification {
   data      Json?
   createdAt DateTime @default(now())
 }
+
