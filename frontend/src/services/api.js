@@ -1,4 +1,4 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 
 const api = axios.create({
   baseURL: '/api/v1',
@@ -11,7 +11,7 @@ if (stored?.state?.accessToken) {
   api.defaults.headers.common['Authorization'] = `Bearer ${stored.state.accessToken}`;
 }
 
-// Response interceptor — auto-refresh on 401
+// Response interceptor â€” auto-refresh on 401
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
@@ -52,6 +52,8 @@ export const locationApi = {
 };
 
 export const communityApi = {
+  create: (data) => api.post('/communities', data),
+  update: (id, data) => api.patch(/communities/+id, data),
   list: () => api.get('/communities'),
   get: (id) => api.get(`/communities/${id}`),
 };
@@ -67,3 +69,4 @@ export const mediaApi = {
   }),
   remove: (id) => api.delete(`/media/${id}`),
 };
+
