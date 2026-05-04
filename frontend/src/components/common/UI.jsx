@@ -1,27 +1,42 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import clsx from 'clsx';
 
 // ── TierBadge ─────────────────────────────────────────────────────────────────
 export function TierBadge({ tier }) {
   const { t } = useTranslation();
-  const classes = {
-    PUBLIC:    'badge-public',
-    COMMUNITY: 'badge-community',
-    ELDER:     'badge-elder',
-    SACRED:    'badge-sacred',
+  const styles = {
+    PUBLIC:    { background: '#D9EBB8', color: '#1E3D0A' },
+    COMMUNITY: { background: '#C4DFF5', color: '#062C55' },
+    ELDER:     { background: '#D9C9A8', color: '#362612' },
+    SACRED:    { background: '#F8D8C7', color: '#55180C' },
   };
-  return <span className={clsx('badge', classes[tier] || 'badge-public')}>{t(`tiers.${tier}`)}</span>;
+  const s = styles[tier] || styles.PUBLIC;
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', padding: '0.125rem 0.625rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 500, background: s.background, color: s.color }}>
+      {t(`tiers.${tier}`)}
+    </span>
+  );
 }
 
 // ── CategoryBadge ─────────────────────────────────────────────────────────────
 export function CategoryBadge({ category }) {
   const { t } = useTranslation();
   return (
-    <span className="badge bg-earth-100 text-earth-700">
+    <span style={{ display: 'inline-flex', alignItems: 'center', padding: '0.125rem 0.625rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 500, background: '#EDE4D3', color: '#523D1C' }}>
       {t(`knowledge.categories.${category}`, { defaultValue: category })}
     </span>
   );
+}
+
+// ── CategoryIcon ──────────────────────────────────────────────────────────────
+export function CategoryIcon({ category }) {
+  const icons = {
+    LIVESTOCK_MANAGEMENT: '🐄', WATER_SOURCES: '💧', GRAZING_ROUTES: '🗺️',
+    MEDICINAL_PLANTS: '🌿', WEATHER_PREDICTION: '☁️', CONFLICT_RESOLUTION: '🤝',
+    CULTURAL_CEREMONIES: '🎭', FOOD_PRESERVATION: '🫙', ECOLOGICAL_KNOWLEDGE: '🌱',
+    ORAL_HISTORY: '📖', GOVERNANCE: '⚖️', OTHER: '📋',
+  };
+  return <span style={{ fontSize: '2rem' }}>{icons[category] || '📋'}</span>;
 }
 
 // ── KnowledgeCard ─────────────────────────────────────────────────────────────
@@ -33,60 +48,46 @@ export function KnowledgeCard({ record }) {
   const thumb = record.mediaFiles?.[0]?.cdnUrl;
 
   return (
-    <Link to={`/knowledge/${record.id}`} className="card block overflow-hidden group">
-      {thumb && (
-        <div className="h-44 overflow-hidden bg-earth-100">
-          <img src={thumb} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-        </div>
-      )}
-      {!thumb && (
-        <div className="h-44 bg-gradient-to-br from-savanna-50 to-earth-100 flex items-center justify-center">
-          <CategoryIcon category={record.category} />
-        </div>
-      )}
-      <div className="p-5">
-        <div className="flex items-center gap-2 mb-2 flex-wrap">
-          <TierBadge tier={record.accessTier} />
-          <CategoryBadge category={record.category} />
-        </div>
-        <h3 className="font-display font-semibold text-earth-900 text-lg leading-snug mb-1 line-clamp-2 group-hover:text-savanna-700 transition-colors">
-          {title}
-        </h3>
-        <p className="text-earth-500 text-sm line-clamp-2 leading-relaxed">{description}</p>
-        <div className="mt-4 pt-3 border-t border-earth-100 flex items-center justify-between text-xs text-earth-400">
-          <span>{record.community?.name}</span>
-          <span>{record.viewCount ?? 0} views</span>
+    <Link to={`/knowledge/${record.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+      <div className="card" style={{ overflow: 'hidden', height: '100%' }}>
+        {thumb ? (
+          <div style={{ height: '11rem', overflow: 'hidden', background: '#EDE4D3' }}>
+            <img src={thumb} alt={title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+        ) : (
+          <div style={{ height: '11rem', background: 'linear-gradient(135deg, #F0F7E6, #EDE4D3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <CategoryIcon category={record.category} />
+          </div>
+        )}
+        <div style={{ padding: '1.25rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+            <TierBadge tier={record.accessTier} />
+            <CategoryBadge category={record.category} />
+          </div>
+          <h3 style={{ fontFamily: 'Playfair Display, serif', fontWeight: 600, color: '#1A1008', fontSize: '1.125rem', lineHeight: 1.4, marginBottom: '0.375rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+            {title}
+          </h3>
+          <p style={{ color: '#8B6F35', fontSize: '0.875rem', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+            {description}
+          </p>
+          <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid #EDE4D3', display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#A88B50' }}>
+            <span>{record.community?.name}</span>
+            <span>{record.viewCount ?? 0} views</span>
+          </div>
         </div>
       </div>
     </Link>
   );
 }
 
-// ── CategoryIcon ──────────────────────────────────────────────────────────────
-export function CategoryIcon({ category, className = 'w-12 h-12 text-earth-300' }) {
-  const icons = {
-    LIVESTOCK_MANAGEMENT: '🐄',
-    WATER_SOURCES: '💧',
-    GRAZING_ROUTES: '🗺️',
-    MEDICINAL_PLANTS: '🌿',
-    WEATHER_PREDICTION: '☁️',
-    CONFLICT_RESOLUTION: '🤝',
-    CULTURAL_CEREMONIES: '🎭',
-    FOOD_PRESERVATION: '🫙',
-    ECOLOGICAL_KNOWLEDGE: '🌱',
-    ORAL_HISTORY: '📖',
-    GOVERNANCE: '⚖️',
-    OTHER: '📋',
-  };
-  return <span className="text-4xl">{icons[category] || '📋'}</span>;
-}
-
 // ── Spinner ───────────────────────────────────────────────────────────────────
 export function Spinner({ size = 'md' }) {
-  const s = { sm: 'w-4 h-4', md: 'w-8 h-8', lg: 'w-12 h-12' }[size];
+  const sizes = { sm: '1rem', md: '2rem', lg: '3rem' };
+  const s = sizes[size];
   return (
-    <div className="flex items-center justify-center p-8">
-      <div className={clsx(s, 'border-2 border-earth-200 border-t-savanna-600 rounded-full animate-spin')} />
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+      <div style={{ width: s, height: s, border: '2px solid #EDE4D3', borderTop: '2px solid #3A700D', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
@@ -94,10 +95,10 @@ export function Spinner({ size = 'md' }) {
 // ── EmptyState ────────────────────────────────────────────────────────────────
 export function EmptyState({ icon = '📭', title, description, action }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="text-6xl mb-4">{icon}</div>
-      <h3 className="font-display text-xl text-earth-700 mb-2">{title}</h3>
-      {description && <p className="text-earth-400 text-sm mb-6 max-w-sm">{description}</p>}
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 1rem', textAlign: 'center' }}>
+      <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>{icon}</div>
+      <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.25rem', color: '#523D1C', marginBottom: '0.5rem' }}>{title}</h3>
+      {description && <p style={{ color: '#A88B50', fontSize: '0.875rem', marginBottom: '1.5rem', maxWidth: '24rem' }}>{description}</p>}
       {action}
     </div>
   );
@@ -106,12 +107,12 @@ export function EmptyState({ icon = '📭', title, description, action }) {
 // ── PageHeader ────────────────────────────────────────────────────────────────
 export function PageHeader({ title, subtitle, action }) {
   return (
-    <div className="bg-white border-b border-earth-100">
-      <div className="page-container py-8">
-        <div className="flex items-start justify-between gap-4">
+    <div style={{ background: 'white', borderBottom: '1px solid #EDE4D3' }}>
+      <div style={{ maxWidth: '80rem', margin: '0 auto', padding: '2rem 1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
           <div>
-            <h1 className="section-title">{title}</h1>
-            {subtitle && <p className="text-earth-500 mt-1">{subtitle}</p>}
+            <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.875rem', fontWeight: 600, color: '#1A1008' }}>{title}</h1>
+            {subtitle && <p style={{ color: '#8B6F35', marginTop: '0.25rem' }}>{subtitle}</p>}
           </div>
           {action}
         </div>
