@@ -1,18 +1,11 @@
 const { verifyAccessToken } = require('../utils/jwt');
 const { AppError } = require('../utils/AppError');
-const { redis } = require('../config/redis');
 
 exports.authenticate = async (req, res, next) => {
   try {
-    const header = req.headers.authorization;
+    const header = req.headers?.authorization;
     if (!header?.startsWith('Bearer ')) throw new AppError('No token provided', 401);
-
     const token = header.split(' ')[1];
-
-    // Check blacklist
-    const blacklisted = await redis.get(`blacklist:${token}`);
-    if (blacklisted) throw new AppError('Token revoked', 401);
-
     const payload = verifyAccessToken(token);
     req.user = payload;
     next();
@@ -23,17 +16,14 @@ exports.authenticate = async (req, res, next) => {
 
 exports.optionalAuth = async (req, res, next) => {
   try {
-    const header = req.headers.authorization;
+    const header = req.headers?.authorization;
     if (header?.startsWith('Bearer ')) {
       const token = header.split(' ')[1];
-      const blacklisted = await redis.get(`blacklist:${token}`);
-      if (!blacklisted) {
-        req.user = verifyAccessToken(token);
-      }
+      req.user = verifyAccessToken(token);
     }
     next();
   } catch {
-    next(); // silently continue without user
+    next();
   }
 };
 

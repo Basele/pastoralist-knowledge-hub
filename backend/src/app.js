@@ -21,6 +21,8 @@ const notificationRoutes = require('./routes/notification.routes');
 const engagementRoutes = require('./routes/engagement.routes');
 
 const app = express();
+// Trust DO App Platform proxy
+app.set('trust proxy', 1);
 
 // ── Security ──────────────────────────────────────────────────────────────────
 app.use(helmet({
