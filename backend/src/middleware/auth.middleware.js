@@ -1,30 +1,36 @@
 const { verifyAccessToken } = require('../utils/jwt');
 const { AppError } = require('../utils/AppError');
 
-exports.authenticate = async (req, res, next) => {
+function extractToken(req) {
   try {
-    const header = req.headers?.authorization;
-    if (!header?.startsWith('Bearer ')) throw new AppError('No token provided', 401);
-    const token = header.split(' ')[1];
-    const payload = verifyAccessToken(token);
-    req.user = payload;
+    if (!req || !req.headers) return null;
+    const auth = req.headers['authorization'];
+    if (auth && typeof auth === 'string' && auth.startsWith('Bearer ')) {
+      return auth.substring(7);
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+exports.authenticate = (req, res, next) => {
+  try {
+    const token = extractToken(req);
+    if (!token) return next(new AppError('No token provided', 401));
+    req.user = verifyAccessToken(token);
     next();
   } catch (err) {
     next(err);
   }
 };
 
-exports.optionalAuth = async (req, res, next) => {
+exports.optionalAuth = (req, res, next) => {
   try {
-    const header = req.headers?.authorization;
-    if (header?.startsWith('Bearer ')) {
-      const token = header.split(' ')[1];
-      req.user = verifyAccessToken(token);
-    }
-    next();
-  } catch {
-    next();
-  }
+    const token = extractToken(req);
+    if (token) req.user = verifyAccessToken(token);
+  } catch {}
+  next();
 };
 
 exports.requireRole = (...roles) => (req, res, next) => {
