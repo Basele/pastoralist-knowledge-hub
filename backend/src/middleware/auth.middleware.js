@@ -1,5 +1,6 @@
 const { verifyAccessToken } = require('../utils/jwt');
 const { AppError } = require('../utils/AppError');
+const { logger } = require('../utils/logger');
 
 exports.authenticate = (req, res, next) => {
   try {
@@ -17,10 +18,17 @@ exports.optionalAuth = (req, res, next) => {
     if (req && req.headers) {
       const auth = req.headers['authorization'] || '';
       if (auth.startsWith('Bearer ')) {
-        req.user = verifyAccessToken(auth.substring(7));
+        try {
+          req.user = verifyAccessToken(auth.substring(7));
+        } catch (err) {
+          logger.debug('Optional auth token validation failed: ' + err.message);
+          // Continue without user - this is optional auth
+        }
       }
     }
-  } catch {}
+  } catch (err) {
+    logger.debug('Optional auth error: ' + err.message);
+  }
   next();
 };
 

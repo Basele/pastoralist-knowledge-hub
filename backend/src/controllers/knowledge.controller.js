@@ -1,9 +1,10 @@
-const { PrismaClient } = require('@prisma/client');
+const { getPrismaClient } = require('../config/prisma');
 const { AppError } = require('../utils/AppError');
 const { indexRecord, deleteRecord } = require('../services/search.service');
 const { logger } = require('../utils/logger');
+const validation = require('../utils/validation');
 
-const prisma = new PrismaClient();
+const prisma = getPrismaClient();
 
 const TIER_ORDER = { PUBLIC: 0, COMMUNITY: 1, ELDER: 2, SACRED: 3 };
 
@@ -18,6 +19,9 @@ exports.list = async (req, res, next) => {
       page = 1, limit = 20, category, communityId,
       status = 'APPROVED', language
     } = req.query;
+
+    // Validate pagination
+    const { page: validPage, limit: validLimit } = validation.pagination(page, limit);
 
     const userTier = req.user?.accessTier || 'PUBLIC';
     const allowedTiers = Object.entries(TIER_ORDER)
@@ -34,8 +38,8 @@ exports.list = async (req, res, next) => {
     const [records, total] = await Promise.all([
       prisma.knowledgeRecord.findMany({
         where,
-        skip: (page - 1) * limit,
-        take: parseInt(limit),
+        skip: (validPage - 1) * validLimit,
+        take: validLimit,
         orderBy: { createdAt: 'desc' },
         select: {
           id: true, title: true, titleSwahili: true,
@@ -54,7 +58,7 @@ exports.list = async (req, res, next) => {
 
     res.json({
       data: records,
-      meta: { total, page: parseInt(page), limit: parseInt(limit), pages: Math.ceil(total / limit) },
+      meta: { total, page: validPage, limit: validLimit, pages: Math.ceil(total / validLimit) },
     });
   } catch (err) {
     next(err);

@@ -2,12 +2,12 @@
 
 // â”€â”€ Media routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const mediaRouter = express.Router();
-const { PrismaClient } = require("@prisma/client");
+const { getPrismaClient } = require("../config/prisma");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
 const AWS = require("aws-sdk");
 const { authenticate, requireRole } = require("../middleware/auth.middleware");
-const prisma = new PrismaClient();
+const prisma = getPrismaClient();
 
 const s3 = new AWS.S3({
   endpoint: process.env.DO_SPACES_ENDPOINT,

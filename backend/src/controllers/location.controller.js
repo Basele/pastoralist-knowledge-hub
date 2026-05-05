@@ -1,7 +1,7 @@
-const { PrismaClient } = require('@prisma/client');
+const { getPrismaClient } = require('../config/prisma');
 const { AppError } = require('../utils/AppError');
 
-const prisma = new PrismaClient();
+const prisma = getPrismaClient();
 
 // GET /api/v1/locations
 exports.list = async (req, res, next) => {

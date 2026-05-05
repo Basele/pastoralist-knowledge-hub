@@ -53,9 +53,7 @@ export const locationApi = {
 
 export const communityApi = {
   create: (data) => api.post('/communities', data),
-  update: (id, data) => api.patch(/communities/+id, data),
-  create: (data) => api.post('/communities', data),
-  update: (id, data) => api.patch(/communities/+id, data),
+  update: (id, data) => api.patch(`/communities/${id}`, data),
   list: () => api.get('/communities'),
   get: (id) => api.get(`/communities/${id}`),
 };

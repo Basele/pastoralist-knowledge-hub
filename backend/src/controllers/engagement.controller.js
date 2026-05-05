@@ -1,8 +1,8 @@
-const { PrismaClient } = require('@prisma/client');
+const { getPrismaClient } = require('../config/prisma');
 const { v4: uuidv4 } = require('uuid');
 const { AppError } = require('../utils/AppError');
 
-const prisma = new PrismaClient();
+const prisma = getPrismaClient();
 
 // ── Comments ──────────────────────────────────────────────────────────────────
 

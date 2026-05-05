@@ -1,12 +1,13 @@
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
-const { PrismaClient } = require('@prisma/client');
+const { getPrismaClient } = require('../config/prisma');
 const { generateTokens, verifyRefreshToken } = require('../utils/jwt');
 const { AppError } = require('../utils/AppError');
 const { logger } = require('../utils/logger');
 const { sendWelcome } = require('../services/email.service');
+const validation = require('../utils/validation');
 
-const prisma = new PrismaClient();
+const prisma = getPrismaClient();
 
 const COOKIE_OPTS = {
   httpOnly: true,
@@ -21,12 +22,8 @@ exports.register = async (req, res, next) => {
   try {
     const { email, password, name, nameSwahili, communityId } = req.body;
 
-    if (!email || !password || !name) {
-      throw new AppError('Email, password, and name are required', 400);
-    }
-    if (password.length < 8) {
-      throw new AppError('Password must be at least 8 characters', 400);
-    }
+    // Validate input
+    validation.register({ email, password, name });
 
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) throw new AppError('Email already registered', 409);
@@ -75,7 +72,9 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) throw new AppError('Email and password are required', 400);
+    
+    // Validate input
+    validation.login({ email, password });
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user || !user.isActive) throw new AppError('Invalid credentials', 401);

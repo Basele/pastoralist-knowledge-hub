@@ -177,4 +177,94 @@ model MediaFile {
   mimeType        String
   size            Int
   url             String
+  cdnUrl          String
+  mediaType       String     @default("DOCUMENT")
+  caption         String?
+  captionSwahili  String?
+  accessTier      AccessTier @default("PUBLIC")
+  uploadedById    String     @db.Uuid
+  uploadedBy      User       @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+  recordId        String?    @db.Uuid
+  record          KnowledgeRecord? @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Comment {
+  id           String     @id @default(uuid()) @db.Uuid
+  content      String
+  contentSw    String?
+  isModerated  Boolean    @default(false)
+  authorId     String     @db.Uuid
+  author       User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  recordId     String     @db.Uuid
+  record       KnowledgeRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  parentId     String?    @db.Uuid
+  parent       Comment?   @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies      Comment[]  @relation("CommentReplies")
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  @@index([recordId])
+  @@index([authorId])
+}
+
+model Review {
+  id           String     @id @default(uuid()) @db.Uuid
+  rating       Int        @default(5)
+  comment      String?
+  commentSw    String?
+  reviewerRole String     @default("ELDER_CUSTODIAN")
+  reviewerId   String     @db.Uuid
+  reviewer     User       @relation(fields: [reviewerId], references: [id], onDelete: Cascade)
+  recordId     String     @db.Uuid
+  record       KnowledgeRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  status       String     @default("PENDING")
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  @@index([recordId])
+  @@index([reviewerId])
+}
+
+model ConsentGrant {
+  id           String     @id @default(uuid()) @db.Uuid
+  purpose      String
+  purposeSw    String?
+  grantedBy    String     @db.Uuid
+  grantedByUser User      @relation(fields: [grantedBy], references: [id], onDelete: Cascade)
+  recordId     String     @db.Uuid
+  record       KnowledgeRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  status       String     @default("ACTIVE")
+  expiresAt    DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  @@index([recordId])
+  @@index([grantedBy])
+}
+
+model Notification {
+  id           String     @id @default(uuid()) @db.Uuid
+  type         String
+  title        String
+  titleSw      String?
+  message      String
+  messageSw    String?
+  actionUrl    String?
+  isRead       Boolean    @default(false)
+  userId       String     @db.Uuid
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  @@index([userId])
+  @@index([isRead])
+}
+  CONSERVATION_AREA
+  OTHER
+}
+
+model MediaFile {
+  id              String     @id @default(uuid()) @db.Uuid
+  filename        String
+  originalName    String
+  mimeType        String
+  size            Int
+  url             String
   cdnUrl

@@ -11,6 +11,7 @@ const { logger } = require('./utils/logger');
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
 const knowledgeRoutes = require('./routes/knowledge.routes');
+const engagementRoutes = require('./routes/engagement.routes');
 const locationRoutes = require('./routes/location.routes');
 const mediaRoutes = require('./routes/media.routes');
 const communityRoutes = require('./routes/community.routes');
@@ -41,14 +42,23 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('combined', { stream: { write: msg => logger.http(msg.trim()) } }));
 
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'pikh-api', timestamp: new Date().toISOString() });
+app.get('/health', async (req, res) => {
+  try {
+    const { getPrismaClient } = require('./config/prisma');
+    const prisma = getPrismaClient();
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ status: 'ok', service: 'pikh-api', timestamp: new Date().toISOString() });
+  } catch (err) {
+    logger.error('Health check failed: ' + err.message);
+    res.status(503).json({ status: 'error', service: 'pikh-api', timestamp: new Date().toISOString() });
+  }
 });
 
 const API = '/api/v1';
 app.use(`${API}/auth`, authRoutes);
 app.use(`${API}/users`, userRoutes);
 app.use(`${API}/knowledge`, knowledgeRoutes);
+app.use(`${API}/knowledge/:id`, engagementRoutes);
 app.use(`${API}/locations`, locationRoutes);
 app.use(`${API}/media`, mediaRoutes);
 app.use(`${API}/communities`, communityRoutes);
