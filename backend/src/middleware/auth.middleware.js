@@ -1,30 +1,27 @@
 const { verifyAccessToken } = require('../utils/jwt');
 const { AppError } = require('../utils/AppError');
 
-exports.authenticate = async (req, res, next) => {
+exports.authenticate = (req, res, next) => {
   try {
-    const header = req.headers?.authorization;
-    if (!header?.startsWith('Bearer ')) throw new AppError('No token provided', 401);
-    const token = header.split(' ')[1];
-    const payload = verifyAccessToken(token);
-    req.user = payload;
+    if (!req || !req.headers) return next(new AppError('No token provided', 401));
+    const auth = req.headers['authorization'] || '';
+    if (!auth.startsWith('Bearer ')) return next(new AppError('No token provided', 401));
+    const token = auth.substring(7);
+    req.user = verifyAccessToken(token);
     next();
-  } catch (err) {
-    next(err);
-  }
+  } catch (err) { next(err); }
 };
 
-exports.optionalAuth = async (req, res, next) => {
+exports.optionalAuth = (req, res, next) => {
   try {
-    const header = req.headers?.authorization;
-    if (header?.startsWith('Bearer ')) {
-      const token = header.split(' ')[1];
-      req.user = verifyAccessToken(token);
+    if (req && req.headers) {
+      const auth = req.headers['authorization'] || '';
+      if (auth.startsWith('Bearer ')) {
+        req.user = verifyAccessToken(auth.substring(7));
+      }
     }
-    next();
-  } catch {
-    next();
-  }
+  } catch {}
+  next();
 };
 
 exports.requireRole = (...roles) => (req, res, next) => {
