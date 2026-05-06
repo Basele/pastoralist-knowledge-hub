@@ -177,94 +177,81 @@ model MediaFile {
   mimeType        String
   size            Int
   url             String
-  cdnUrl          String
-  mediaType       String     @default("DOCUMENT")
+  cdnUrl          String?
+  mediaType       MediaType
+  duration        Int?
+  transcription   String?    @db.Text
+  transcriptionSw String?    @db.Text
   caption         String?
   captionSwahili  String?
-  accessTier      AccessTier @default("PUBLIC")
+  accessTier      AccessTier @default(PUBLIC)
   uploadedById    String     @db.Uuid
-  uploadedBy      User       @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+  uploadedBy      User       @relation(fields: [uploadedById], references: [id])
   recordId        String?    @db.Uuid
-  record          KnowledgeRecord? @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  record          KnowledgeRecord? @relation(fields: [recordId], references: [id])
   createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+}
+
+enum MediaType {
+  IMAGE
+  AUDIO
+  VIDEO
+  DOCUMENT
 }
 
 model Comment {
-  id           String     @id @default(uuid()) @db.Uuid
-  content      String
-  contentSw    String?
-  isModerated  Boolean    @default(false)
-  authorId     String     @db.Uuid
-  author       User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  recordId     String     @db.Uuid
-  record       KnowledgeRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
-  parentId     String?    @db.Uuid
-  parent       Comment?   @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
-  replies      Comment[]  @relation("CommentReplies")
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  @@index([recordId])
-  @@index([authorId])
+  id          String          @id @default(uuid()) @db.Uuid
+  content     String          @db.Text
+  contentSw   String?         @db.Text
+  authorId    String          @db.Uuid
+  author      User            @relation(fields: [authorId], references: [id])
+  recordId    String          @db.Uuid
+  record      KnowledgeRecord @relation(fields: [recordId], references: [id])
+  parentId    String?         @db.Uuid
+  parent      Comment?        @relation("CommentReplies", fields: [parentId], references: [id])
+  replies     Comment[]       @relation("CommentReplies")
+  isModerated Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 }
 
 model Review {
-  id           String     @id @default(uuid()) @db.Uuid
-  rating       Int        @default(5)
-  comment      String?
-  commentSw    String?
-  reviewerRole String     @default("ELDER_CUSTODIAN")
-  reviewerId   String     @db.Uuid
-  reviewer     User       @relation(fields: [reviewerId], references: [id], onDelete: Cascade)
-  recordId     String     @db.Uuid
-  record       KnowledgeRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
-  status       String     @default("PENDING")
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  @@index([recordId])
-  @@index([reviewerId])
+  id         String          @id @default(uuid()) @db.Uuid
+  decision   ReviewDecision
+  notes      String?         @db.Text
+  reviewerId String          @db.Uuid
+  reviewer   User            @relation(fields: [reviewerId], references: [id])
+  recordId   String          @db.Uuid
+  record     KnowledgeRecord @relation(fields: [recordId], references: [id])
+  createdAt  DateTime        @default(now())
+}
+
+enum ReviewDecision {
+  APPROVED
+  REJECTED
+  NEEDS_REVISION
 }
 
 model ConsentGrant {
-  id           String     @id @default(uuid()) @db.Uuid
-  purpose      String
-  purposeSw    String?
-  grantedBy    String     @db.Uuid
-  grantedByUser User      @relation(fields: [grantedBy], references: [id], onDelete: Cascade)
-  recordId     String     @db.Uuid
-  record       KnowledgeRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
-  status       String     @default("ACTIVE")
-  expiresAt    DateTime?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  @@index([recordId])
-  @@index([grantedBy])
+  id          String          @id @default(uuid()) @db.Uuid
+  grantedById String          @db.Uuid
+  grantedBy   User            @relation(fields: [grantedById], references: [id])
+  recordId    String          @db.Uuid
+  record      KnowledgeRecord @relation(fields: [recordId], references: [id])
+  purpose     String
+  expiresAt   DateTime?
+  isActive    Boolean         @default(true)
+  createdAt   DateTime        @default(now())
 }
 
 model Notification {
-  id           String     @id @default(uuid()) @db.Uuid
-  type         String
-  title        String
-  titleSw      String?
-  message      String
-  messageSw    String?
-  actionUrl    String?
-  isRead       Boolean    @default(false)
-  userId       String     @db.Uuid
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt    DateTime   @default(now())
-  @@index([userId])
-  @@index([isRead])
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  data      Json?
+  createdAt DateTime @default(now())
 }
-  CONSERVATION_AREA
-  OTHER
-}
-
-model MediaFile {
-  id              String     @id @default(uuid()) @db.Uuid
-  filename        String
-  originalName    String
-  mimeType        String
-  size            Int
-  url             String
-  cdnUrl

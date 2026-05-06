@@ -1,9 +1,16 @@
-const { PrismaClient } = require('@prisma/client');
-
+let PrismaClient;
 let prisma;
 
 function getPrismaClient() {
   if (!prisma) {
+    if (!PrismaClient) {
+      try {
+        PrismaClient = require('@prisma/client').PrismaClient;
+      } catch (error) {
+        throw new Error('Prisma client not generated. Run `npx prisma generate` in backend and install dependencies, then restart. Original error: ' + error.message);
+      }
+    }
+
     prisma = new PrismaClient({
       log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
     });
