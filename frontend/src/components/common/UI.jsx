@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-// ── TierBadge ─────────────────────────────────────────────────────────────────
+// â”€â”€ TierBadge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function TierBadge({ tier }) {
   const { t } = useTranslation();
   const styles = {
@@ -18,7 +18,7 @@ export function TierBadge({ tier }) {
   );
 }
 
-// ── CategoryBadge ─────────────────────────────────────────────────────────────
+// â”€â”€ CategoryBadge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function CategoryBadge({ category }) {
   const { t } = useTranslation();
   return (
@@ -28,18 +28,18 @@ export function CategoryBadge({ category }) {
   );
 }
 
-// ── CategoryIcon ──────────────────────────────────────────────────────────────
+// â”€â”€ CategoryIcon â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function CategoryIcon({ category }) {
   const icons = {
-    LIVESTOCK_MANAGEMENT: '🐄', WATER_SOURCES: '💧', GRAZING_ROUTES: '🗺️',
-    MEDICINAL_PLANTS: '🌿', WEATHER_PREDICTION: '☁️', CONFLICT_RESOLUTION: '🤝',
-    CULTURAL_CEREMONIES: '🎭', FOOD_PRESERVATION: '🫙', ECOLOGICAL_KNOWLEDGE: '🌱',
-    ORAL_HISTORY: '📖', GOVERNANCE: '⚖️', OTHER: '📋',
+    LIVESTOCK_MANAGEMENT: 'ðŸ„', WATER_SOURCES: 'ðŸ’§', GRAZING_ROUTES: 'ðŸ—ºï¸',
+    MEDICINAL_PLANTS: 'ðŸŒ¿', WEATHER_PREDICTION: 'â˜ï¸', CONFLICT_RESOLUTION: 'ðŸ¤',
+    CULTURAL_CEREMONIES: 'ðŸŽ­', FOOD_PRESERVATION: 'ðŸ«™', ECOLOGICAL_KNOWLEDGE: 'ðŸŒ±',
+    ORAL_HISTORY: 'ðŸ“–', GOVERNANCE: 'âš–ï¸', OTHER: 'ðŸ“‹',
   };
-  return <span style={{ fontSize: '2rem' }}>{icons[category] || '📋'}</span>;
+  return <span style={{ fontSize: '2rem' }}>{icons[category] || 'ðŸ“‹'}</span>;
 }
 
-// ── KnowledgeCard ─────────────────────────────────────────────────────────────
+// â”€â”€ KnowledgeCard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function KnowledgeCard({ record }) {
   const { i18n } = useTranslation();
   const isSw = i18n.language === 'sw';
@@ -80,7 +80,7 @@ export function KnowledgeCard({ record }) {
   );
 }
 
-// ── Spinner ───────────────────────────────────────────────────────────────────
+// â”€â”€ Spinner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function Spinner({ size = 'md' }) {
   const sizes = { sm: '1rem', md: '2rem', lg: '3rem' };
   const s = sizes[size];
@@ -92,8 +92,8 @@ export function Spinner({ size = 'md' }) {
   );
 }
 
-// ── EmptyState ────────────────────────────────────────────────────────────────
-export function EmptyState({ icon = '📭', title, description, action }) {
+// â”€â”€ EmptyState â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export function EmptyState({ icon = 'ðŸ“­', title, description, action }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 1rem', textAlign: 'center' }}>
       <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>{icon}</div>
@@ -104,7 +104,7 @@ export function EmptyState({ icon = '📭', title, description, action }) {
   );
 }
 
-// ── PageHeader ────────────────────────────────────────────────────────────────
+// â”€â”€ PageHeader â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function PageHeader({ title, subtitle, action }) {
   return (
     <div style={{ background: 'white', borderBottom: '1px solid #EDE4D3' }}>
