@@ -19,39 +19,37 @@ export default function LoginPage() {
       toast.success('Welcome back!');
       navigate('/');
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Login failed');
-    } finally {
-      setLoading(false);
-    }
+      toast.error(err.response && err.response.data && err.response.data.error || 'Login failed');
+    } finally { setLoading(false); }
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-savanna-600 flex items-center justify-center text-white font-display font-bold text-2xl mx-auto mb-4">P</div>
-          <h1 className="font-display text-3xl font-bold text-earth-900">{t('auth.login_title')}</h1>
-          <p className="text-earth-500 mt-2">{t('auth.login_subtitle')}</p>
+    <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1.5rem' }}>
+      <div style={{ width: '100%', maxWidth: '28rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div style={{ width: '3.5rem', height: '3.5rem', borderRadius: '1rem', background: '#3A700D', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '1.5rem', margin: '0 auto 1rem' }}>P</div>
+          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.75rem', fontWeight: 700, color: '#1A1008' }}>{t('auth.login_title')}</h1>
+          <p style={{ color: '#8B6F35', marginTop: '0.5rem' }}>{t('auth.login_subtitle')}</p>
         </div>
-        <div className="card p-8">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <div className="card" style={{ padding: '2rem' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div>
-              <label className="block text-sm font-medium text-earth-700 mb-1.5">{t('auth.email')}</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#523D1C', marginBottom: '0.375rem' }}>{t('auth.email')}</label>
               <input type="email" required className="input" value={form.email}
                 onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-earth-700 mb-1.5">{t('auth.password')}</label>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#523D1C', marginBottom: '0.375rem' }}>{t('auth.password')}</label>
               <input type="password" required className="input" value={form.password}
                 onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
             </div>
-            <button type="submit" disabled={loading} className="btn-primary w-full justify-center py-3">
-              {loading ? '...' : t('auth.login_btn')}
+            <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '0.75rem' }}>
+              {loading ? 'Signing in...' : t('auth.login_btn')}
             </button>
           </form>
-          <p className="text-center text-sm text-earth-500 mt-6">
+          <p style={{ textAlign: 'center', fontSize: '0.875rem', color: '#8B6F35', marginTop: '1.5rem' }}>
             {t('auth.no_account')}{' '}
-            <Link to="/register" className="text-savanna-600 font-medium hover:underline">{t('nav.register')}</Link>
+            <Link to="/register" style={{ color: '#3A700D', fontWeight: 500, textDecoration: 'none' }}>{t('nav.register')}</Link>
           </p>
         </div>
       </div>

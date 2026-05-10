@@ -15,39 +15,32 @@ export default function CommunityPage() {
 
   return (
     <div>
-      <PageHeader
-        title={t('nav.community')}
-        subtitle="Discover the pastoralist communities contributing to the hub"
-      />
-      <div className="page-container py-10">
-        {isLoading ? <Spinner /> : !communities?.length ? (
-          <EmptyState icon="🌍" title="No communities yet" description="Communities will appear here once registered." />
+      <PageHeader title={t('nav.community')} subtitle="Discover the pastoralist communities contributing to the hub" />
+      <div style={{ maxWidth: '80rem', margin: '0 auto', padding: '2.5rem 1.5rem' }}>
+        {isLoading ? <Spinner /> : !communities || !communities.length ? (
+          <EmptyState title="No communities yet" description="Communities will appear here once registered." />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
             {communities.map(c => {
               const name = (isSw && c.nameSwahili) ? c.nameSwahili : c.name;
               const desc = (isSw && c.descriptionSwahili) ? c.descriptionSwahili : c.description;
               return (
-                <div key={c.id} className="card p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    {c.logo ? (
-                      <img src={c.logo} alt={name} className="w-12 h-12 rounded-xl object-cover" />
-                    ) : (
-                      <div className="w-12 h-12 rounded-xl bg-savanna-100 flex items-center justify-center text-savanna-700 font-display font-bold text-xl">
-                        {name[0]}
-                      </div>
-                    )}
+                <div key={c.id} className="card" style={{ padding: '1.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                    <div style={{ width: '3rem', height: '3rem', borderRadius: '0.75rem', background: '#D9EBB8', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2D5616', fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '1.25rem', flexShrink: 0 }}>
+                      {name[0]}
+                    </div>
                     <div>
-                      <h3 className="font-display font-semibold text-earth-900">{name}</h3>
-                      <p className="text-earth-400 text-xs">{c.region}, {c.country}</p>
+                      <h3 style={{ fontFamily: 'Playfair Display, serif', fontWeight: 600, color: '#1A1008', fontSize: '1rem' }}>{name}</h3>
+                      <p style={{ color: '#A88B50', fontSize: '0.75rem' }}>{c.region}, {c.country}</p>
                     </div>
                   </div>
-                  {desc && <p className="text-earth-500 text-sm leading-relaxed mb-4 line-clamp-3">{desc}</p>}
-                  <div className="flex items-center justify-between text-sm text-earth-400 border-t border-earth-100 pt-4">
-                    <span>👥 {c._count?.members || 0} members</span>
-                    <span>📚 {c._count?.knowledgeRecords || 0} records</span>
+                  {desc && <p style={{ color: '#6E5528', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1rem', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{desc}</p>}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1rem', borderTop: '1px solid #EDE4D3', fontSize: '0.8rem', color: '#A88B50', marginBottom: '1rem' }}>
+                    <span>{c._count && c._count.members || 0} members</span>
+                    <span>{c._count && c._count.knowledgeRecords || 0} records</span>
                   </div>
-                  <Link to={`/knowledge?communityId=${c.id}`} className="btn-secondary w-full justify-center mt-4 text-sm">
+                  <Link to={'/knowledge?communityId=' + c.id} className="btn-secondary" style={{ width: '100%', justifyContent: 'center', fontSize: '0.875rem' }}>
                     View Knowledge
                   </Link>
                 </div>
